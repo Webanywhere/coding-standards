@@ -12,6 +12,11 @@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
+namespace Kohana\Sniffs\Commenting;
+
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
+
 /**
  * This sniff prohibits the use of parentheses for constructor calls that 
  * do not accept parameters.
@@ -23,7 +28,7 @@
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Kohana_Sniffs_Commenting_OneLineCommentSniff implements PHP_CodeSniffer_Sniff
+class OneLineCommentSniff implements Sniff
 {
     /**
      * Returns an array of tokens this test wants to listen for.
@@ -40,19 +45,19 @@ class Kohana_Sniffs_Commenting_OneLineCommentSniff implements PHP_CodeSniffer_Sn
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile File being scanned
+     * @param File $phpcsFile File being scanned
      * @param int $stackPtr Position of the current token in the stack
      *        passed in $tokens.
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         $content = $tokens[$stackPtr]['content'];
 
         if (preg_match('/^\s*(?:\/\/[^ ]|#)/', $content)) {
             $error = 'Single-line comments must begin with "// " (e.g. // My comment)';
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsFile->addError($error, $stackPtr, 'OneLineComment');
         }
     }
 }

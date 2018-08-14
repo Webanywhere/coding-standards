@@ -12,6 +12,11 @@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
+namespace Kohana\Sniffs\Functions;
+
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
+
 /**
  * Throws errors if ternary expressions use parentheses improperly or exceed 
  * 80 characters in length on a single line.
@@ -23,7 +28,7 @@
  * @version   Release: @release_version@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Kohana_Sniffs_Functions_RegularExpressionSniff implements PHP_CodeSniffer_Sniff
+class RegularExpressionSniff implements Sniff
 {
     /**
      * Returns an array of tokens this test wants to listen for.
@@ -40,13 +45,13 @@ class Kohana_Sniffs_Functions_RegularExpressionSniff implements PHP_CodeSniffer_
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile All the tokens found in the 
+     * @param File $phpcsFile All the tokens found in the 
      *        document
      * @param int $stackPtr Position of the current token in the stack passed 
      *        in $tokens
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -59,7 +64,7 @@ class Kohana_Sniffs_Functions_RegularExpressionSniff implements PHP_CodeSniffer_
             // Is this a POSIX function?
             if (preg_match('/^(ereg|spliti?|sql_regcase)$/', $tokens[$stackPtr]['content'])) { 
                 $error = 'PCRE (preg) functions are preferred over POSIX (ereg) functions';
-                $phpcsFile->addError($error, $stackPtr);
+                $phpcsFile->addError($error, $stackPtr, 'RegexPreferPreg');
 
             // Is this a PCRE function?
             } elseif (strpos($tokens[$stackPtr]['content'], 'preg') === 0) {
@@ -69,7 +74,7 @@ class Kohana_Sniffs_Functions_RegularExpressionSniff implements PHP_CodeSniffer_
                 $content = $tokens[$nextPtr]['content'];
                 if (substr($content, 0, 1) == '"') {
                     $error = 'Regular expressions must be surrounded by single quotes';
-                    $phpcsFile->addError($error, $stackPtr);
+                    $phpcsFile->addError($error, $stackPtr, 'RegexSingleQuotes');
                 }
 
                 // Does the regular expression have a EOL hole?
@@ -95,7 +100,7 @@ class Kohana_Sniffs_Functions_RegularExpressionSniff implements PHP_CodeSniffer_
                 // Is the replacement using the $n notation for backreferences?
                 if (preg_match('/\\\\[0-9]+/', $content)) {
                     $error = 'Backreferences in regular expressions must use $n notation rather than \\n notation';
-                    $phpcsFile->addError($error, $stackPtr);
+                    $phpcsFile->addError($error, $stackPtr, 'RegexBackRefs');
                 }
             }
         }

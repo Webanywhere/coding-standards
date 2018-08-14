@@ -14,6 +14,12 @@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
+namespace Kohana\Sniffs\NamingConventions;
+
+use PHP_CodeSniffer\Standards\Generic\Sniffs\NamingConventions\UpperCaseConstantNameSniff as GenericUpperCaseConstantNameSniff;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
+
 /**
  * Kohana_Sniffs_NamingConventions_UpperCaseConstantNameSniff.
  *
@@ -28,7 +34,7 @@
  * @version   Release: 1.2.2
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Kohana_Sniffs_NamingConventions_UpperCaseConstantNameSniff extends Generic_Sniffs_NamingConventions_UpperCaseConstantNameSniff
+class UpperCaseConstantNameSniff extends GenericUpperCaseConstantNameSniff
 {
 
 

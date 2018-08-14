@@ -12,6 +12,11 @@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
+namespace Kohana\Sniffs\Operators;
+
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
+
 /**
  * Logs an error when a ternary operation is not in parentheses. Operands must also be in
  * parentheses unless it is a single variable, array access, object access or function call.
@@ -23,7 +28,7 @@
  * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Kohana_Sniffs_Operators_TernaryOperatorSniff implements PHP_CodeSniffer_Sniff
+class TernaryOperatorSniff implements Sniff
 {
     /**
      * Returns an array of tokens this test wants to listen for.
@@ -40,11 +45,11 @@ class Kohana_Sniffs_Operators_TernaryOperatorSniff implements PHP_CodeSniffer_Sn
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile
+     * @param File $phpcsFile
      * @param int $stackPtr Position of the current token in the stack
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -120,13 +125,13 @@ class Kohana_Sniffs_Operators_TernaryOperatorSniff implements PHP_CodeSniffer_Sn
     /**
      * Verifies one operand of a ternary operation follows Kohana coding standards
      *
-     * @param   PHP_CodeSniffer_Sniff   $file
+     * @param   File   $file
      * @param   string                  $name   Portion being evaluated. Used in error messages.
      * @param   integer                 $start  Index of the first token in the portion
      * @param   integer                 $end    Index of the last token in the portion
      * @return  void
      */
-    protected function _evaluate_portion(PHP_CodeSniffer_File $file, $name, $start, $end)
+    protected function _evaluate_portion(File $file, $name, $start, $end)
     {
         // Skip any whitespace or casts
         $current = $file->findNext(array(
@@ -220,10 +225,10 @@ class Kohana_Sniffs_Operators_TernaryOperatorSniff implements PHP_CodeSniffer_Sn
      * @param array   Array of file's tokens
      * @param integer Pointer to token at end of section
      * @param string  Section name (i.e. condition or value)
-     * @param PHP_CodeSniffer_File The file we're examining
+     * @param File The file we're examining
      * @return integer The position of the last token in the call (i.e. last non-whitespace token)
      */
-    protected function _find_next_invokation_or_access($current, $next, $tokens, $end, $name, PHP_CodeSniffer_File $file)
+    protected function _find_next_invokation_or_access($current, $next, $tokens, $end, $name, File $file)
     {
         while ($next = $file->findNext(T_WHITESPACE, $current + 1, $end, TRUE))
         {

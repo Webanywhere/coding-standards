@@ -12,9 +12,10 @@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-if (class_exists('PEAR_Sniffs_NamingConventions_ValidFunctionNameSniff', true) === false) {
-    throw new PHP_CodeSniffer_Exception('Class PEAR_Sniffs_NamingConventions_ValidFunctionNameSniff not found');
-}
+namespace Kohana\Sniffs\NamingConventions;
+
+use PHP_CodeSniffer\Sniffs\AbstractScopeSniff;
+use PHP_CodeSniffer\Files\File;
 
 /**
  * Ensures methods and functions are named correctly.
@@ -26,7 +27,7 @@ if (class_exists('PEAR_Sniffs_NamingConventions_ValidFunctionNameSniff', true) =
  * @version   Release: @release_version@ 
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Kohana_Sniffs_NamingConventions_ValidFunctionNameSniff extends PHP_CodeSniffer_Standards_AbstractScopeSniff 
+class ValidFunctionNameSniff extends AbstractScopeSniff 
 {
     // Copied from the base class because it's declared as private there
     protected $_magicMethods = array(
@@ -75,13 +76,13 @@ class Kohana_Sniffs_NamingConventions_ValidFunctionNameSniff extends PHP_CodeSni
     /**
      * Processes the tokens within the scope.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile File being processed
+     * @param File $phpcsFile File being processed
      * @param int $stackPtr Position where this token was found
      * @param int $currScope Position of the current scope
      *
      * @return void
      */
-    protected function processTokenWithinScope(PHP_CodeSniffer_File $phpcsFile, $stackPtr, $currScope)
+    protected function processTokenWithinScope(File $phpcsFile, $stackPtr, $currScope)
     {
         $className  = $phpcsFile->getDeclarationName($currScope);
         $methodName = $phpcsFile->getDeclarationName($stackPtr);
@@ -95,7 +96,7 @@ class Kohana_Sniffs_NamingConventions_ValidFunctionNameSniff extends PHP_CodeSni
             $magicPart = substr($methodName, 2);
             if (in_array($magicPart, $this->_magicMethods) === false) {
                  $error = 'Method name "' . $className . '::' . $methodName . '" is invalid; only PHP magic methods should be prefixed with a double underscore';
-                 $phpcsFile->addError($error, $stackPtr);
+                 $phpcsFile->addError($error, $stackPtr, 'FunctionDoubleUnderscore');
             }
             return;
         }
@@ -108,18 +109,18 @@ class Kohana_Sniffs_NamingConventions_ValidFunctionNameSniff extends PHP_CodeSni
         // Evaluate all other functions and methods
         if ($this->isInvalidName($methodName)) {
             $error = 'Method name "' . $methodName . '" is not in all lowercase using underscores for word separators';
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsFile->addError($error, $stackPtr, 'FunctionNaming');
         }
     }
 
     /**
      * Processes the tokens outside the scope.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile File being processed
+     * @param File $phpcsFile File being processed
      * @param int $stackPtr Position where this token was found
      * @return void
      */
-    protected function processTokenOutsideScope(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    protected function processTokenOutsideScope(File $phpcsFile, $stackPtr)
     {
         $functionName = $phpcsFile->getDeclarationName($stackPtr);
 
@@ -131,7 +132,7 @@ class Kohana_Sniffs_NamingConventions_ValidFunctionNameSniff extends PHP_CodeSni
         if (substr($functionName, 0, 2) == '__') {
             if (in_array(substr($functionName, 2), $this->_magicFunctions) === false) {
                  $error = "Function name \"$functionName\" is invalid; only PHP magic functions should be prefixed with a double underscore";
-                 $phpcsFile->addError($error, $stackPtr);
+                 $phpcsFile->addError($error, $stackPtr, 'FunctionUnderscore');
             }
             return;
         }
@@ -146,7 +147,7 @@ class Kohana_Sniffs_NamingConventions_ValidFunctionNameSniff extends PHP_CodeSni
         // Evaluate all other functions and methods
         if ($this->isInvalidName($functionName)) {
             $error = 'Function name "' . $functionName . '" is not in all lowercase using underscores for word separators';
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsFile->addError($error, $stackPtr, 'FunctionNaming');
         }
     }
 }

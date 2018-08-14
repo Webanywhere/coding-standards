@@ -12,6 +12,11 @@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
+namespace Kohana\Sniffs\ControlStructures;
+
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
+
 /**
  * Throws errors if switch structures do not conform to the coding standard.
  *
@@ -22,7 +27,7 @@
  * @version   Release: @release_version@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Kohana_Sniffs_ControlStructures_SwitchSniff implements PHP_CodeSniffer_Sniff
+class SwitchSniff implements Sniff
 {
     /**
      * Returns an array of tokens this test wants to listen for.
@@ -41,13 +46,13 @@ class Kohana_Sniffs_ControlStructures_SwitchSniff implements PHP_CodeSniffer_Sni
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile All the tokens found in the
+     * @param File $phpcsFile All the tokens found in the
      *        document
      * @param int $stackPtr Position of the current token in the stack passed
      *        in $tokens
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         $line = $tokens[$stackPtr]['line'];
@@ -70,7 +75,7 @@ class Kohana_Sniffs_ControlStructures_SwitchSniff implements PHP_CodeSniffer_Sni
                 case 'T_BREAK':
                     if ($tokenPtr > $stackPtr) {
                         $error = 'Each case, break, and default should be on a separate line';
-                        $phpcsFile->addError($error, $stackPtr);
+                        $phpcsFile->addError($error, $stackPtr, 'SwitchOwnLines');
                     }
             }
         }
@@ -137,7 +142,7 @@ class Kohana_Sniffs_ControlStructures_SwitchSniff implements PHP_CodeSniffer_Sni
                 // Empty lines are exempt from the indentation rules
                 if( ! $empty_line)
                 {
-                    $phpcsFile->addError('Code inside case and default blocks should be indented', $tokenPtr);
+                    $phpcsFile->addError('Code inside case and default blocks should be indented', $tokenPtr, 'SwitchIndentation');
                 }
             }
         }

@@ -12,10 +12,10 @@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-if (class_exists('PHP_CodeSniffer_Standards_AbstractVariableSniff', true) === false) {
-    $error = 'Class PHP_CodeSniffer_Standards_AbstractVariableSniff not found';
-    throw new PHP_CodeSniffer_Exception($error);
-}
+namespace Kohana\Sniffs\NamingConventions;
+
+use PHP_CodeSniffer\Sniffs\AbstractVariableSniff;
+use PHP_CodeSniffer\Files\File;
 
 /**
  * Checks the naming of variables.
@@ -27,17 +27,17 @@ if (class_exists('PHP_CodeSniffer_Standards_AbstractVariableSniff', true) === fa
  * @version   Release: @release_version@ 
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Kohana_Sniffs_NamingConventions_ValidVariableNameSniff extends PHP_CodeSniffer_Standards_AbstractVariableSniff
+class ValidVariableNameSniff extends AbstractVariableSniff
 {
     /**
      * Supporting method to validate variable names.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile File being scanned
+     * @param File $phpcsFile File being scanned
      * @param int $stackPtr Position of the current token in the stack 
      *        passed in $tokens
      * @return bool TRUE if the variable name is valid, FALSE otherwise
      */
-    private function validateName(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    private function validateName(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         $variable = ltrim($tokens[$stackPtr]['content'], '$');
@@ -48,19 +48,19 @@ class Kohana_Sniffs_NamingConventions_ValidVariableNameSniff extends PHP_CodeSni
         }
 
         if (!preg_match('#^(?:GLOBALS|_(?:SERVER|GET|POST|FILES|COOKIE|SESSION|REQUEST|ENV)|(?:[a-z_\x7f-\xff][a-z0-9_\x7f-\xff]*))$#', $variable)) {
-            $phpcsFile->addError('Variable name $' . $variable . ' is not in all lowercase using underscores for word separators', $stackPtr);
+            $phpcsFile->addError('Variable name $' . $variable . ' is not in all lowercase using underscores for word separators', $stackPtr, 'VariableNaming');
         }
     }
 
     /**
      * Processes class member variables.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile File being scanned
+     * @param File $phpcsFile File being scanned
      * @param int $stackPtr Position of the current token in the stack 
      *        passed in $tokens
      * @return void
      */
-    protected function processMemberVar(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    protected function processMemberVar(File $phpcsFile, $stackPtr)
     {
         $this->validateName($phpcsFile, $stackPtr);
     }
@@ -68,11 +68,11 @@ class Kohana_Sniffs_NamingConventions_ValidVariableNameSniff extends PHP_CodeSni
     /**
      * Processes normal variables.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile File where this token was found
+     * @param File $phpcsFile File where this token was found
      * @param int $stackPtr Position where the token was found
      * @return void
      */
-    protected function processVariable(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    protected function processVariable(File $phpcsFile, $stackPtr)
     {
         $this->validateName($phpcsFile, $stackPtr);
     }
@@ -80,11 +80,11 @@ class Kohana_Sniffs_NamingConventions_ValidVariableNameSniff extends PHP_CodeSni
     /**
      * Processes interpolated variables in double quoted strings.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile File where this token was found
+     * @param File $phpcsFile File where this token was found
      * @param int $stackPtr Position where the token was found
      * @return void
      */
-    protected function processVariableInString(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    protected function processVariableInString(File $phpcsFile, $stackPtr)
     {
         // Ignore these
         return;
