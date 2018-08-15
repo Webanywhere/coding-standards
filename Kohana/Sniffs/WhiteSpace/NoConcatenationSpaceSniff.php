@@ -59,7 +59,7 @@ class NoConcatenationSpaceSniff implements Sniff
 
         if ($tokens[$stackPtr + 1]['code'] === T_WHITESPACE)
         {
-            $phpcsFile->addError('No space is allowed after concatenation operators', $stackPtr, 'ConcatenationNoSpaceAfter');
+            $phpcsFile->addError('No space is allowed around concatenation operators', $stackPtr, 'ConcatenationNoSpaceAround');
         }
 
         // Find the previous token in this statement that is not whitespace
@@ -71,7 +71,7 @@ class NoConcatenationSpaceSniff implements Sniff
 
             if ($tokens[$prevPtr]['line'] === $tokens[$stackPtr]['line'])
             {
-                $phpcsFile->addError('No space is allowed before concatenation operators', $stackPtr, 'ConcatenationNoSpaceBefore');
+                $phpcsFile->addError('No space is allowed around concatenation operators', $stackPtr, 'ConcatenationNoSpaceAround');
             }
             elseif ($tokens[$prevPtr]['line'] !== ($tokens[$stackPtr]['line'] - 1))
             {
